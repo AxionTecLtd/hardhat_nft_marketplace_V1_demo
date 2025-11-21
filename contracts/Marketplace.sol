@@ -5,11 +5,11 @@ pragma solidity ^0.8.20;
 // Marketplace.sol - 二级市场交易合约 (企业级注释版)
 // =====================================================
 // 功能：
-// 1️⃣ 二级市场 NFT 上架、购买、取消上架
-// 2️⃣ 支持创作者版税 (ERC2981)
-// 3️⃣ 支持平台抽成
-// 4️⃣ 资金安全分账（防重入）
-// 5️⃣ 完全链上记录交易
+// 二级市场 NFT 上架、购买、取消上架
+// 支持创作者版税 (ERC2981)
+// 支持平台抽成
+// 资金安全分账（防重入）
+// 完全链上记录交易
 //
 // 设计原则：
 // - 所有资金分账在同一笔交易中完成，保证创作者、平台、卖家收益透明
@@ -114,9 +114,9 @@ contract Marketplace is ReentrancyGuard {
     // =========================================
     // 二级市场购买 NFT
     // 资金流向：
-    // 1️⃣ 创作者版税（ERC2981） → 直接转给创作者
-    // 2️⃣ 平台抽成 → 转给平台账户
-    // 3️⃣ 剩余 → 卖家收益
+    // 创作者版税（ERC2981） → 直接转给创作者
+    // 平台抽成 → 转给平台账户
+    // 剩余 → 卖家收益
     // NFT 转给买家，删除上架记录
     // =========================================
     function buyItem(address nftContract, uint256 tokenId) external payable nonReentrant {
@@ -128,7 +128,7 @@ contract Marketplace is ReentrancyGuard {
         ILazyNFT nft = ILazyNFT(nftContract);
 
         // -------------------------------
-        // 1️⃣ 创作者版税支付
+        // 创作者版税支付
         // -------------------------------
         (address royaltyReceiver, uint256 royaltyAmount) = nft.royaltyInfo(tokenId, msg.value);
         if (royaltyAmount > 0) {
@@ -136,7 +136,7 @@ contract Marketplace is ReentrancyGuard {
         }
 
         // -------------------------------
-        // 2️⃣ 平台抽成
+        // 平台抽成
         // -------------------------------
         uint256 platformFee = (msg.value * platformFeeBps) / 10000;
         if (platformFee > 0) {
@@ -144,7 +144,7 @@ contract Marketplace is ReentrancyGuard {
         }
 
         // -------------------------------
-        // 3️⃣ 卖家收益
+        // 卖家收益
         // -------------------------------
         uint256 sellerAmount = msg.value - royaltyAmount - platformFee;
         payable(listing.seller).sendValue(sellerAmount);
